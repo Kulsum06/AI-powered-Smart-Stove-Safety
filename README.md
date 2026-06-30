@@ -201,12 +201,6 @@ Enjoy real-time monitoring.
 
 ---
 
-## 👨‍💻 Author
-
-**Kulsum**
-
----
-
 ## ⭐ Support
 
 If you like this project, don't forget to ⭐ the repository.

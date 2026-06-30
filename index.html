@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Smart Stove AI Safety Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <canvas id="particlesCanvas"></canvas>
+
+
+    <!-- Settings toggle -->
+    <button class="settings-btn" id="settingsBtn" aria-label="Open settings">⚙️</button>
+
+
+    <!-- Settings panel -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-header">
+            <h2>⚙️ Settings</h2>
+            <span id="closeSettings">✖</span>
+        </div>
+        <button class="panel-btn connect-btn" id="connectBtn">🔗 Connect Smart Stove</button>
+        <button class="panel-btn disconnect-btn" id="disconnectBtn">❌ Disconnect</button>
+        <div class="setting-row"><span>🌙 Theme</span><label class="switch"><input type="checkbox" id="themeToggle"><span class="slider"></span></label></div>
+        <div class="setting-row"><span>🔔 Notifications</span><label class="switch"><input type="checkbox" id="notificationsToggle" checked><span class="slider"></span></label></div>
+        <div class="setting-row"><span>🔊 Voice Alerts</span><label class="switch"><input type="checkbox" id="voiceAlertsToggle" checked><span class="slider"></span></label></div>
+        <div class="setting-row"><span>⛽ Auto Gas Cutoff</span><label class="switch"><input type="checkbox" id="autoCutoffToggle" checked><span class="slider"></span></label></div>
+        <div class="setting-row"><span>🎵 Sound Effects</span><label class="switch"><input type="checkbox" id="soundEffectsToggle" checked><span class="slider"></span></label></div>
+        <div class="setting-row"><span>📈 Graph Animation</span><label class="switch"><input type="checkbox" id="graphAnimToggle" checked><span class="slider"></span></label></div>
+        <button class="reset-btn" id="resetDashboard">♻️ Reset Dashboard</button>
+    </div>
+
+
+    <!-- Toast container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+
+    <!-- Main dashboard -->
+    <div class="container">
+        <div class="header">
+            <div class="logo">🔥</div>
+            <div class="title">Smart Stove</div>
+            <div class="subtitle">Real‑Time AI Safety Monitor</div>
+            <div class="header-mini">📍 Kitchen 1 • Gas Stove Active</div>
+            <div class="top-bar">
+                <div class="status disconnected" id="connectionStatus">● Disconnected</div>
+                <div class="status signal" id="signalStrength">📶 Weak</div>
+            </div>
+        </div>
+
+
+        <!-- Sensor cards -->
+        <div class="grid">
+            <div class="card"><div class="card-header">🌡️ Ambient Temp</div><div class="card-value" id="tempValue">--°C</div><div class="card-label">MLX90614</div></div>
+            <div class="card"><div class="card-header">🔥 Stove Temp</div><div class="card-value" id="objectTempValue">--°C</div><div class="card-label">Object</div></div>
+            <div class="card"><div class="card-header">🚶 Motion (PIR)</div><div class="card-value" id="pirValue">--</div><div class="card-label" id="pirLabel">Waiting...</div></div>
+            <div class="card"><div class="card-header">📡 Flame (IR)</div><div class="card-value" id="irValue">--</div><div class="card-label" id="irLabel">Waiting...</div></div>
+            <div class="card"><div class="card-header">🔊 Buzzer</div><div class="card-value" id="buzzerValue">OFF</div><button class="stop-btn" id="stopBuzzerBtn">🔕 Stop Buzzer</button></div>
+            <div class="card"><div class="card-header">⚡ Gas Valve</div><div class="card-value" id="relayValue">OFF</div><div class="card-label">Valve Control</div></div>
+            <div class="card"><div class="card-header">💡 LED Status</div><div id="ledCircle" class="led-circle"></div><div class="card-label" id="ledText">No Data</div></div>
+            <div class="card"><div class="card-header">⚠️ Safety Score</div><div class="score-circle" id="scoreCircle">100%</div><div class="card-label">Live score</div></div>
+            <div class="card"><div class="card-header">📷 Kitchen Camera</div><div class="camera-box"><img src="https://images.unsplash.com/photo-1556911220-bff31c812dba?q=80&w=1200&auto=format&fit=crop" alt="Kitchen"></div><div class="card-label">AI Monitoring</div></div>
+        </div>
+
+
+        <!-- Global status & timer -->
+        <div class="alert-box" id="globalStatus">✅ SYSTEM SAFE</div>
+        <div class="timer-box">⏱️ No Human Timer: <span id="noHumanTimer">0s</span><span class="timer-stage" id="timerStage"></span></div>
+
+
+        <!-- Safety stages -->
+        <div class="alert-stages" id="alertStages">
+            <div class="stage" id="stage10"><span class="stage-icon">⏰</span><span class="stage-label">10s Alert</span><span class="stage-status">Pending</span></div>
+            <div class="stage" id="stage20"><span class="stage-icon">⚠️</span><span class="stage-label">20s Warning</span><span class="stage-status">Pending</span></div>
+            <div class="stage" id="stage30"><span class="stage-icon">📱</span><span class="stage-label">30s Notification</span><span class="stage-status">Pending</span></div>
+            <div class="stage" id="stage40"><span class="stage-icon">🛑</span><span class="stage-label">40s Auto Cutoff</span><span class="stage-status">Pending</span></div>
+        </div>
+
+
+        <!-- Dual analytics charts -->
+        <div class="charts-container">
+            <div class="graph-container">
+                <h2>📊 Temperature & Danger</h2>
+                <canvas id="tempChart"></canvas>
+            </div>
+            <div class="graph-container">
+                <h2>📈 PIR & IR Activity</h2>
+                <canvas id="sensorChart"></canvas>
+            </div>
+        </div>
+
+
+        <!-- Session summary -->
+        <div class="session-box">
+            <h2>📋 Session Summary</h2>
+            <div class="session-grid">
+                <div class="session-card">⚠️ Alerts<h3 id="totalAlerts">0</h3></div>
+                <div class="session-card">✅ Safe Cycles<h3 id="safeCycles">0</h3></div>
+                <div class="session-card">🌡️ Max Temp<h3 id="maxTemp">0°C</h3></div>
+                <div class="session-card">🛑 Auto Cutoffs<h3 id="autoCutoffCount">0</h3></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="script.js"></script>
+</body>
+</html>

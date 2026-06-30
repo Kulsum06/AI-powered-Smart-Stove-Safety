@@ -1,4 +1,4 @@
-AI-powered-Smart-Stove-Safety
+# AI-powered-Smart-Stove-Safety
 
 An intelligent IoT-based Smart Stove Safety Monitoring System that combines **ESP32 Bluetooth Low Energy (BLE)** communication with a futuristic web dashboard to monitor kitchen safety in real time.
 
